@@ -1,37 +1,73 @@
 const ResultDbAgent = require('../data_access/ReportingDbAgent');
+const IdValidator = require('../data_access/BenchmarkIdGenerator').validate;
 
 const ReportingAgent = function(query, callback) {
-    var result = {};
+    var length = Object.keys(query).length
 
-    if (query.length === 0) {
-        result.error = 'no query specified.';
-        callback(result);
+    // query needs to be present
+    if (length === 0) {
+        callback('no query specified.', null);
         return;
     }
 
-    if (query.length > 1) {
-        result.error = 'only one query item allowed at this time.';
-        callback(result);
+    // validate query length
+    if (length > 2) {
+        callback('invalid number of benchmarks specified.', null);
         return;
     }
 
-    if (query.benchmark) {
-        ResultDbAgent.getBenchmarkResults(query.benchmark, (err, res) => {
+    // if user only specified second benchmark, make it the first one to simplify logic.
+    if (!query.benchmark && query.benchmark2) {
+        query.benchmark = query.benchmark2
+        query.benchmark2 = undefined
+    }
+
+    var report = {};
+
+    if (!query.benchmark)
+    {
+        callback('No benchmark specified.')
+        return;
+    }
+
+    if (!IdValidator(query.benchmark)) {
+        callback(query.benchmark + " is not a valid ID.");
+        return;
+    }
+    
+    // Get STATISTICS
+    ResultDbAgent.getAverageBenchmark(function(err, res) {
+        if (err) {
+            callback(err, null);
+            return;
+        }
+
+        report.statistics = res;
+
+        //Get FIRST report
+        ResultDbAgent.getBenchmarkResults(query.benchmark, function(err, res) {
             if (err) {
                 callback(err, null);
                 return;
             }
-            else {
-                // res.type = "benchmark";
-                callback(null, {'report' : JSON.stringify(res)});
-            }
-        })
-        return;
-    }
 
-    result.error = 'invalid/unknown query.';
-    callback(result);
-    return;
+            report.benchmark = res;
+
+            if (!query.benchmark2) {
+                callback(err, report);
+                return;
+            }
+
+            ResultDbAgent.getBenchmarkResults(query.benchmark2, function(err, res) {
+                if (err) {
+                    callback(err, null);
+                    return;
+                }
+                report.benchmark2 = res;
+                callback(null, report);
+            });
+        });
+    });
 }
 
 module.exports = ReportingAgent;

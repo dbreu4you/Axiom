@@ -6,23 +6,19 @@ var report_routes = function(http) {
 
   //page to configure tests
   router.get('/', function(req, res) {
-        ReportingAgent(req.query, (err, report) => {
-          if (err)
-          {
-            console.log(err)
+        ReportingAgent(req.query, function(err, report) {
+          report = {"report" : JSON.stringify(report)};
+
+          console.log('\n\n\nerror:\n' + err);
+          console.log('\n\n\report:\n' + report);
+
+          if (err) {
+            res.render('error', {"error" : err});
           }
-          // else {
-          //   switch(report.type)
-          //   {
-          //     case("benchmark"):
-          //       console.log(1)
-          //       res.render('benchmark/report', report);
-          //       break;
-          //   }
-          // }
-          const output = {'error' : err, 'report' : report}
-          res.render('benchmark/report', output);
-          res.end();
+          else {
+            console.log(report);
+            res.render('benchmark/report', report);
+          }
         });
   });
 

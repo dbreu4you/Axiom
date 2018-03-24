@@ -1,5 +1,5 @@
 body {
-	background-color: #29292e !important;
+	background: linear-gradient(#e5ebf2, #ebeef5);
 	font-family: 'Roboto', sans-serif;
 	padding-top: 0px;
 	padding-bottom: 0px;
@@ -30,18 +30,49 @@ h2{
 	padding-left: 0px;
 	padding-right: 0px;
 }
+.reporticon {
+	color: rgba(255, 74, 75, 1);
+	font-size: 2vw;
+}
+.report2icon {
+	color: rgba(27, 175, 255, 1);
+	vertical-align:25%;
+}
+.report1icon {
+	color: rgba(255, 74, 75, 1);
+	vertical-align:25%;
+}
+#score1 {
+	color: rgba(255, 74, 75, 1);
+	font-size: 2.5vw;
+}
+#score2 {
+	color: rgba(27, 175, 255, 1);
+	font-size: 2.5vw;
+}
 .sidebar
 {
-	background-color: #364554;
+	background: linear-gradient(#253042, black);
 	height:100vh;
-	width: 16vw;
-	z-index:1030;
+	/* width: 10vw; */
+	/* z-index:1030; */
 	padding: 0px;
 	margin-left: 0px;
-	margin-right: 10px;
-    -webkit-box-shadow: 2px 4px 15px 0px black;
+    /* -webkit-box-shadow: 2px 4px 15px 0px black;
     -moz-box-shadow: 2px 4px 15px 0px black;
-         box-shadow: 2px 4px 15px 0px black;
+         box-shadow: 2px 4px 15px 0px black; */
+}
+.banner {
+	background: linear-gradient(to right, #253042, black);
+	padding: 20px;
+	color: white;
+	margin-top:10px;
+	vertical-align: middle;
+}
+.tile {
+	background-color:white;
+	padding:20px;
+	margin:10px;
 }
 #nav a
 {
@@ -49,11 +80,16 @@ h2{
 	font-size: 40px;
 	font-weight: bold;
 }
-canvas
+#myChart
 {
-	max-width: 760px;
-    max-height: 760px;
-    margin-top:5vh;
+	max-width: 60vw;
+    max-height: 75vh;
+    /* margin-top:2vh; */
+}
+#percentileChart, #sdChart {
+	max-width:21vw;
+	max-height:25vh;
+	/* display:inline !important; */
 }
 .btn-group{
 	margin-top: 5vh;
@@ -62,19 +98,33 @@ canvas
 .btn:hover{
 	background:#253042;
 }
-.btn:focus{ 
+/* .btn:focus{ 
 	background:#253042;
 	box-shadow:none;
-}
-.btn
-{
-	padding:20px;
+} */
+.btn {
+	/* padding:20px;
 	padding-left:40px;
-	padding-right:40px;
-	background-color: #364554;
+	padding-right:40px; */
+	padding:1vw;
+	background-color: inherit;
 	color: white;
-	font-size: 20px;
+	font-size: 1.5vw;
 	width: 100%;
+	border: none;
+}
+.togglebtn {
+	/* margin-top:10px; */
+	margin-left:10px;
+	margin-bottom:10px;
+	padding:10px;
+	padding-left:10px;
+	padding-right:10px;
+	background: linear-gradient(#253042, black);
+	color: #FF5D55;
+	font-size: 1vw;
+	width: 9vw;
+	height: 8vh;
 	border: none;
 }
 th, label
@@ -91,6 +141,15 @@ table, td, th
 }
 th{
 	color:#767777;
+}
+.nav-item {
+	margin-right:20px;
+}
+.banner-text {
+	margin-right:10px;
+	/* text-align:left; */
+	font-size: 1vw;
+	vertical-align:50%;
 }
 canvas{
     -webkit-animation: fadein 1.5s; /* Safari, Chrome and Opera > 12.1 */

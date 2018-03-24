@@ -15,40 +15,80 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="/stylesheets/main.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-        
+        <script src="/javascript/keyboard_navigation.js"></script>
+        <link rel="stylesheet" href="/stylesheets/navigation.css">
     </head>
     <body>
         <% if (report) {%>
             <script>
-                var rep = '<%= report %>'
-                // console.log(JSON.parse(rep))      
+                var rep = <%- JSON.stringify(report) %>
+                var sd = 2.5
+                var percentile = 77
             </script>
-        <!-- <%} else {%>
-            <script>
-                alert(report.error)
-            </script>
-        <%} %> -->
+        <%} %>
         <div class="container-fluid">
             <div class="row">
                 <div class='col-2 sidebar'>
                     <div id="method">
-                        <h1> Axiom </h1>
-                        <div class="btn-group">
-                            <button onclick="fwClick(value)" value="React" class="btn" type="button"> React </button>
-                            <button onclick="fwClick(value)" value="Vue" class="btn" type="button"> Vue </button>
-                            <button onclick="fwClick(value)" value="Polymer" class="btn" type="button"> Polymer</button>
-                            <button onclick="fwClick(value)" value="Angular" class="btn" type="button"> Angular</button>
-                        </div>
+                        <h1 style="font-size:3vw;"> Axiom </h1>
+                        <div class="btn-group"></div>
                     </div>
                 </div>
-                <div class='col-7'>
-                    <canvas id="myChart" height="400" width="400"></canvas>
-                </div>
-                <div class='col-2'>
-                    <p style="color:white;"> some stuff over here</p>
+                <div class="col-10" style="padding:0px">
+                    <div class="col-12" style="padding:0px">
+                        <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="background-color:white;">
+                            <!-- <div class="collapse navbar-collapse"> -->
+                                <div class="navbar-nav" style="color:#686a8b;display:inline-block;">
+                                    <strong class="nav-item"> Benchmark Reporting Engine </strong>
+                                    <a href="/" class="nav-item" data-x="0" data-y="0" style="color:inherit;"> Home </a>
+                                    <!-- <a class="nav-item"> What is this? </a> -->
+                                </div>
+                            <!-- </div> -->
+                        </nav>
+                    </div>
+                    <div class="col-11" >
+                        <div class="banner" style="height:12vh;display:flex;align-items:center;">
+                            <div id="os-div" style="width:20%;text-align:center;">
+                                <span class="banner-text" >Operating System</span>
+                                <i id="os" class="fa fa-3x" aria-hidden="true"></i>
+                            </div>
+                            <div id="hw-div" style="width:20%;text-align:center;">
+                                <span class="banner-text">Platform</span>
+                                <i id="hw" class="fa fa-3x" aria-hidden="true"></i>
+                            </div>
+                            <div id="browser-div" style="width:20%;text-align:center;">
+                                <span class="banner-text">Browser</span>
+                                <i id="browser" class="fa fa-3x" aria-hidden="true"></i>
+                            </div>
+                            <div id="ts" style="width:20%;text-align:center;font-size:1vw;">Time: 8:45 pm 08/21/18 </div>
+                            <div id="score" style="width:20%;text-align:center;"> 
+                                <div style="width:100%;font-size:1.5vw;margin-top:10px;"> Score </div>
+                                <span id="score1"></span>
+                                <span id="score2"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12" style="display:flex;padding:0px;">
+                        <div class="col-8" style="padding:0px;">
+                            <canvas class='tile' id="myChart" height="400" width="400"></canvas>
+                        </div>
+                        <div class="col-3" style="padding:0px">
+                            <div class='tile' style="text-align:center;" > 
+                                <span style="color:#686a8b;font-size:1.5vw;"> Standard Deviation </span>
+                                <!-- <h1 id="sd"> </h1> -->
+                                <canvas id="sdChart" height="400" width="400"></canvas>
+                            </div>
+                            <div style="text-align:center;" class='tile'>
+                                <span style="color:#686a8b;font-size:1.5vw;"> Percentile </span>
+                                <canvas id="percentileChart" height="400" width="400"></canvas>
+                            </div>
+                            <button onclick="displayBenchmark(value)" class="togglebtn" data-x="1" data-y="0" value="0"> Display Benchmark 1 </button>
+                            <button onclick="displayBenchmark(value)" class="togglebtn" data-x="2" data-y="0" style="display:none;" value="1"> Display Benchmark 2</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

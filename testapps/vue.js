@@ -2,11 +2,16 @@ var Vue = require('vue');
 
 var t0 = 0, t1 = 0, t2 = 0, t3 = 0;
 
+var Child = Vue.extend({
+    template: '<div>"I am a child!"</div>'
+});
+
 var timing = {
   rend: 0,
   dest: 0,
   mount: 0,
-  update: 0
+  update: 0,
+  createChild: 0
 };
 var results = {};
 
@@ -15,7 +20,11 @@ var vm = function() {
     el: '#testbench',
     data: {
       message: 'Hello Vue.js!',
-      val: 0
+      val: 0,
+      children: []
+    },
+    addChild: function() {
+      this.children.push(new Child());
     },
     beforeCreate: function() {
       //console.log("before created!")
@@ -69,7 +78,7 @@ var testA = function(callback) {
   }
 
   results = {};
-  results.test = "Vue Lifecycle Test A"
+  results.test = "Lifecycle Test A"
   results.render = timing.rend/1000
   results.destroy = timing.dest/1000
   results.mount = timing.mount/1000
@@ -78,22 +87,46 @@ var testA = function(callback) {
 
 // updating test
 var testB = function(callback) {
-  t0 = t1 = t2 = t3 = 0
+  t2 = t3 = 0
   results = {};
-  results.test = "Vue Lifecycle Test B"
+  results.test = "Lifecycle Test B"
   let v = vm();
-  t0 = performance.now()
-  Vue.set(v, 'val', 10)
-  v.$forceUpdate();
+  for (let i = 0; i < 1000; i++) {
+    t2 = performance.now()
+    v.children.push(new Child());
+    v.$forceUpdate();
+    Vue.nextTick().then(function() {
+      t3 = performance.now()
+      timing.update += t3 - t2
+      if (i == 999) {
+        results.update = timing.update / 1000
+        callback(results)
+      }
+    })
+  }
+}
 
-  // ONLY DOES ONE UPDATE, CHANGE TO 1000
-  Vue.nextTick().then(function() {
-    timing.update = t3 - t0
-    results.update = timing.update
-    callback(results)
-  })
+var testC = function(callback) {
+  t0 = t1 = 0
+  results = {};
+  results.test = "Child Lifecycle Test"
+  let v = vm();
+  for (let i = 0; i < 1000; i++){
+    t0 = performance.now()
+    v.children.push(new Child());
+    v.$forceUpdate();
+    Vue.nextTick().then(function() {
+      t1 = performance.now()
+      timing.createChild += t1 - t0
+      if (i == 999) {
+        results.createChild = timing.createChild / 1000
+        callback(results)
+      }
+    })
+  }
 }
 
 window.UUT.testA = testA;
 window.UUT.testB = testB;
+window.UUT.testC = testC;
 window.UUT.vm = vm();

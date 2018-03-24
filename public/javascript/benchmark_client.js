@@ -30,7 +30,7 @@ var resetUUT = function() {
 var socket = io();
 var suite;
 
-socket.on('connect', () => {
+socket.on('connect', function() {
     log('connected to server socket. Listening...');
     urlParams.userAgent = navigator.userAgent;
     socket.emit('benchmark_request', urlParams);
@@ -38,7 +38,7 @@ socket.on('connect', () => {
 
 //loads a new framework script.
 //the framework script should generate a UUT which can be unloaded later.
-socket.on('framework_load', (params) => {
+socket.on('framework_load', function(params) {
 
     //reset bench
     resetUUT();
@@ -86,17 +86,33 @@ socket.on('framework_load', (params) => {
 });
 
 //executes the requested test on the loaded framework
-socket.on('test_request', (params) => {
+socket.on('test_request', function(params) {
     console.log(params);
     log('test_request: ' + params.name + ' requested.');
-
+    var watchdog = {
+        isRunning: false,
+        start: function(timeout, callback) {
+            watchdog.isRunning = true;
+    
+            var onElapsed = function() {
+                if (watchdog.isRunning)
+                {
+                    watchdog.isRunning = false;
+                    callback();
+                }
+            }
+    
+            setTimeout(onElapsed, timeout);
+        }
+    }
     var callback = function(result) {
+        watchdog.isRunning = false;
         log(params.name + ' done. Result: ' + JSON.stringify(result));
         // result.function = params.function;
         //result.name = params.name;
         socket.emit('test_result', result);
     }
-
+    watchdog.start(30000, console.log("TEST TOOK TOO LONG: Timeout 30s"));
     window.UUT.runTest(params, callback);
 });
 
@@ -105,7 +121,7 @@ socket.on('benchmark_done', function(params) {
     window.location.href = window.location.origin + '/report?benchmark=' + params.id;
 });
 
-socket.on('benchmark_progress', (params) => {
+socket.on('benchmark_progress', function(params) {
     var i = setInterval(function(p) {
         let progress = $('#progressBar').val();
         if(progress < p) {
